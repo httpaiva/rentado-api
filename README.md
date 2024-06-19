@@ -31,6 +31,15 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Development
+
+Whenever creating new resources, it might be needed to rebuild the docker containers to see the changes.
+
+```bash
+$ docker compose down --volumes --remove-orphans
+$ docker compose build
+```
+
 ## License
 
 Nest is [MIT licensed](LICENSE).

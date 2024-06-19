@@ -3,7 +3,7 @@ version: '3.5'
 services:
   db:
     image: postgres
-    restart: always
+    restart: on-failure
     environment:
       - POSTGRES_PASSWORD=postgres
     container_name: postgres
@@ -23,12 +23,10 @@ services:
       - '3000:3000'
     depends_on:
       - db
-    volumes:
-      - ./src:/app/src
 
   pgadmin:
     image: dpage/pgadmin4
-    restart: always
+    restart: on-failure
     container_name: nest-pgadmin4
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
