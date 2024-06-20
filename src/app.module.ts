@@ -9,6 +9,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auth/constants';
 import { AuthGuard } from './auth/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { LocationsModule } from './locations/locations.module';
+import { Location } from './locations/entities/location.entity';
 
 @Module({
   imports: [
@@ -19,7 +21,7 @@ import { APP_GUARD } from '@nestjs/core';
       username: 'postgres',
       password: 'postgres',
       database: 'postgres',
-      entities: [User],
+      entities: [User, Location],
       synchronize: true,
       autoLoadEntities: true,
     }),
@@ -30,6 +32,7 @@ import { APP_GUARD } from '@nestjs/core';
     }),
     UserModule,
     AuthModule,
+    LocationsModule,
   ],
   controllers: [AppController],
   providers: [
