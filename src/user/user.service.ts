@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -12,7 +13,14 @@ export class UserService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async create(user: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
+
+    const user = this.usersRepository.create({
+      ...createUserDto,
+      password: hashedPassword,
+    });
     return this.usersRepository.save(user);
   }
 
@@ -25,15 +33,29 @@ export class UserService {
     return this.usersRepository.find();
   }
 
-  findOneByEmail(email: string): Promise<User | null> {
-    return this.usersRepository.findOneBy({ email });
+  async findOneByEmail(email: string): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: { email },
+      select: ['id', 'email', 'firstName', 'lastName', 'password'], // explicitly select the password
+    });
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
+    return user;
   }
 
-  findOne(id: string): Promise<User | null> {
-    return this.usersRepository.findOneBy({ id });
+  async findOne(id: string): Promise<User | null> {
+    const user = await this.usersRepository.findOneBy({ id });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
   }
 
   async remove(id: string): Promise<void> {
-    await this.usersRepository.delete(id);
+    const result = await this.usersRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
   }
 }
