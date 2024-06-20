@@ -2,7 +2,7 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Rentado is a App developed for a Web Development course at Universidade Católica de Brasília.
 
 ## Installation
 
@@ -39,6 +39,10 @@ Whenever creating new resources, it might be needed to rebuild the docker contai
 $ docker compose down --volumes --remove-orphans
 $ docker compose build
 ```
+
+## Routes
+
+The available routes can be tested using Insomnia, Thunder Client or any other Client tool for APIs using this [document](./docs/api-test.json).
 
 ## License
 
