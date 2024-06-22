@@ -11,14 +11,16 @@ import { LocationsService } from './locations.service';
 import { Location } from './entities/location.entity';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
+import { User } from 'src/user/entities/user.entity';
+import { GetUser } from 'src/user/user.decorator';
 
 @Controller('locations')
 export class LocationsController {
   constructor(private readonly locationService: LocationsService) {}
 
   @Get()
-  async findAll(): Promise<Location[]> {
-    return await this.locationService.findAll();
+  async findAll(@GetUser() user: User): Promise<Location[]> {
+    return await this.locationService.findAll(user.id);
   }
 
   @Get(':id')
@@ -27,8 +29,11 @@ export class LocationsController {
   }
 
   @Post()
-  async create(@Body() createLocationDto: CreateLocationDto) {
-    return await this.locationService.create(createLocationDto);
+  async create(
+    @Body() createLocationDto: CreateLocationDto,
+    @GetUser() user: User,
+  ) {
+    return await this.locationService.create(createLocationDto, user.id);
   }
 
   @Patch(':id')

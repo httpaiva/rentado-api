@@ -5,12 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
-import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './auth/constants';
-import { AuthGuard } from './auth/auth.guard';
+import { JwtAuthGuard } from './auth/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { LocationsModule } from './locations/locations.module';
 import { Location } from './locations/entities/location.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -25,11 +24,7 @@ import { Location } from './locations/entities/location.entity';
       synchronize: true,
       autoLoadEntities: true,
     }),
-    JwtModule.register({
-      global: true,
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '1h' },
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
     UserModule,
     AuthModule,
     LocationsModule,
@@ -39,7 +34,7 @@ import { Location } from './locations/entities/location.entity';
     AppService,
     {
       provide: APP_GUARD,
-      useClass: AuthGuard,
+      useClass: JwtAuthGuard,
     },
   ],
 })

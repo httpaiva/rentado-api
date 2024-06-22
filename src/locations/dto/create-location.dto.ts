@@ -9,5 +9,4 @@ export class CreateLocationDto {
   number: string;
   complement?: string;
   postalCode: string;
-  userId: string;
 }

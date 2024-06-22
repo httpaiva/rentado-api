@@ -15,23 +15,29 @@ export class LocationsService {
     private userRepository: Repository<User>,
   ) {}
 
-  async create(createLocationDto: CreateLocationDto): Promise<Location> {
-    const { userId, ...locationData } = createLocationDto;
+  async create(
+    createLocationDto: CreateLocationDto,
+    userId: string,
+  ): Promise<Location> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new Error('User not found');
     }
-
     const location = this.locationsRepository.create({
-      ...locationData,
+      ...createLocationDto,
       user,
     });
 
     return this.locationsRepository.save(location);
   }
 
-  async findAll() {
-    return await this.locationsRepository.find();
+  async findAll(userId: string): Promise<Location[]> {
+    return await this.locationsRepository.find({
+      where: { user: { id: userId } },
+      relations: ['user'],
+      loadRelationIds: true,
+      order: { id: 'ASC' }, // you can adjust the ordering as needed
+    });
   }
 
   async findOne(id: string) {

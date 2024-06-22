@@ -16,7 +16,7 @@ $ npm install
 docker compose up
 ```
 
-Then access the NestJS application by visiting `http://localhost:3000` and pgAdmin by visiting `http://localhost:5050`.
+Then access the NestJS application by visiting `http://localhost:3001` and pgAdmin by visiting `http://localhost:5050`.
 
 ## Test
 
