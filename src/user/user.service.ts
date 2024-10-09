@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -14,14 +18,22 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    const user = await this.usersRepository.findOneBy({
+      email: createUserDto.email,
+    });
+
+    if (user) {
+      throw new UnauthorizedException(`This e-mail is already in use`);
+    }
+
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
 
-    const user = this.usersRepository.create({
+    const newUser = this.usersRepository.create({
       ...createUserDto,
       password: hashedPassword,
     });
-    return this.usersRepository.save(user);
+    return this.usersRepository.save(newUser);
   }
 
   async update(id: string, user: UpdateUserDto): Promise<User | null> {
