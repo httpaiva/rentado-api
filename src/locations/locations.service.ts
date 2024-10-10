@@ -10,19 +10,13 @@ import { User } from 'src/user/entities/user.entity';
 export class LocationsService {
   constructor(
     @InjectRepository(Location)
-    private locationsRepository: Repository<Location>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private readonly locationsRepository: Repository<Location>,
   ) {}
 
   async create(
     createLocationDto: CreateLocationDto,
-    userId: string,
+    user: User,
   ): Promise<Location> {
-    const user = await this.userRepository.findOneBy({ id: userId });
-    if (!user) {
-      throw new Error('User not found');
-    }
     const location = this.locationsRepository.create({
       ...createLocationDto,
       user,
@@ -31,7 +25,7 @@ export class LocationsService {
     return this.locationsRepository.save(location);
   }
 
-  async findAll(userId: string): Promise<Location[]> {
+  async findAllFromUser(userId: string): Promise<Location[]> {
     return await this.locationsRepository.find({
       where: { user: { id: userId } },
       relations: ['user'],

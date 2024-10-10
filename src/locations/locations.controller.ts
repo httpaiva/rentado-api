@@ -20,7 +20,7 @@ export class LocationsController {
 
   @Get()
   async findAll(@GetUser() user: User): Promise<Location[]> {
-    return await this.locationService.findAll(user.id);
+    return await this.locationService.findAllFromUser(user.id);
   }
 
   @Get(':id')
@@ -33,7 +33,8 @@ export class LocationsController {
     @Body() createLocationDto: CreateLocationDto,
     @GetUser() user: User,
   ) {
-    return await this.locationService.create(createLocationDto, user.id);
+    const location = await this.locationService.create(createLocationDto, user);
+    return location;
   }
 
   @Patch(':id')

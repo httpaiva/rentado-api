@@ -1,11 +1,23 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { SignInDto } from './dto/sign-in.dto';
-import { AuthService } from './auth.service';
 import { Public } from 'src/utils/decorators/Public';
+import { UserService } from 'src/user/user.service';
+import { JwtService } from '@nestjs/jwt';
+import { compare } from 'bcrypt';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Public()
   @HttpCode(HttpStatus.OK)
@@ -13,9 +25,17 @@ export class AuthController {
   async signIn(@Body() signInDto: SignInDto) {
     const { email, password } = signInDto;
 
-    return await this.authService.signIn({
-      email,
-      password,
-    });
+    const user = await this.userService.findOneByEmail(email);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    if (await compare(user.password, password)) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const payload = { sub: user.id, email: user.email };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 }
