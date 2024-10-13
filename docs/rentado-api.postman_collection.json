@@ -8,6 +8,39 @@
 	},
 	"item": [
 		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "SignIn",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"joao@silva.com\",\n  \"password\": \"123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3001/auth/signin",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "User",
 			"item": [
 				{
@@ -129,7 +162,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg3NTg4MTksImV4cCI6MTcyODc2MjQxOX0.Mrs_ftxP2_LEeg4gwJryx5g93wyuLR9E5s6FKXI20jA"
 							}
 						],
 						"body": {
@@ -161,7 +194,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg3NTg4MTksImV4cCI6MTcyODc2MjQxOX0.Mrs_ftxP2_LEeg4gwJryx5g93wyuLR9E5s6FKXI20jA"
 							}
 						],
 						"url": {
@@ -209,20 +242,20 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "Auth",
-			"item": [
+				},
 				{
-					"name": "SignIn",
+					"name": "Delete Location",
 					"request": {
-						"method": "POST",
-						"header": [],
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"teste2@email.com\",\n  \"password\": \"123\"\n}",
+							"raw": "{\n  \"aditional_info\": \"Teste2\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -230,14 +263,140 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3001/auth/signin",
+							"raw": "localhost:3001/locations/4",
 							"host": [
 								"localhost"
 							],
 							"port": "3001",
 							"path": [
-								"auth",
-								"signin"
+								"locations",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Renters",
+			"item": [
+				{
+					"name": "Create Renter",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg4NDc1OTcsImV4cCI6MTcyODg1MTE5N30.yc6zHv_L1aENxywZybGnksF83x5PX29M0VB6EA-qjSg"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fisrtName\": \"Locatario\",\n    \"lastName\": \"Primeiro\",\n    \"document_cpf\": \"123.456.789-10\",\n    \"document_rg\": \"1.123.123\",\n    \"nationality\": \"Brasileiro\",\n    \"birthDate\": \"01/01/1999\",\n    \"maritalStatus\": \"Solteiro\",\n    \"ocupation\": \"Do Comércio\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3001/renters",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"renters"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Renters",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg4NDc1OTcsImV4cCI6MTcyODg1MTE5N30.yc6zHv_L1aENxywZybGnksF83x5PX29M0VB6EA-qjSg"
+							}
+						],
+						"url": {
+							"raw": "localhost:3001/renters",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"renters"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Renter",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg4NDc1OTcsImV4cCI6MTcyODg1MTE5N30.yc6zHv_L1aENxywZybGnksF83x5PX29M0VB6EA-qjSg"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lastName\": \"Segundo\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3001/renters/1",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"renters",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Renter",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg4NDc1OTcsImV4cCI6MTcyODg1MTE5N30.yc6zHv_L1aENxywZybGnksF83x5PX29M0VB6EA-qjSg"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"aditional_info\": \"Teste2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3001/renters/1",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"renters",
+								"1"
 							]
 						}
 					},

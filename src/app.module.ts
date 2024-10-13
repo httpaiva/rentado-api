@@ -10,6 +10,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { LocationsModule } from './locations/locations.module';
 import { Location } from './locations/entities/location.entity';
 import { ConfigModule } from '@nestjs/config';
+import { RenterModule } from './renter/renter.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ConfigModule } from '@nestjs/config';
     UserModule,
     AuthModule,
     LocationsModule,
+    RenterModule,
   ],
   controllers: [AppController],
   providers: [

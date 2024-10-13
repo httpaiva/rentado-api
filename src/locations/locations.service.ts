@@ -30,7 +30,7 @@ export class LocationsService {
       where: { user: { id: userId } },
       relations: ['user'],
       loadRelationIds: true,
-      order: { id: 'ASC' }, // you can adjust the ordering as needed
+      order: { id: 'ASC' },
     });
   }
 
