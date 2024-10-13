@@ -284,11 +284,22 @@
 				{
 					"name": "Create Renter",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg4NTI1NjcsImV4cCI6MTcyODg1NjE2N30.gm8nYaw2Vg96Txzp-FWNmnzQdkR0mFxs1x6p3Uj8H9M",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg4NDc1OTcsImV4cCI6MTcyODg1MTE5N30.yc6zHv_L1aENxywZybGnksF83x5PX29M0VB6EA-qjSg"
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg4NDc1OTcsImV4cCI6MTcyODg1MTE5N30.yc6zHv_L1aENxywZybGnksF83x5PX29M0VB6EA-qjSg",
+								"disabled": true
 							}
 						],
 						"body": {
@@ -396,6 +407,172 @@
 							"port": "3001",
 							"path": [
 								"renters",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rent",
+			"item": [
+				{
+					"name": "Create Rent",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg4NTI1NjcsImV4cCI6MTcyODg1NjE2N30.gm8nYaw2Vg96Txzp-FWNmnzQdkR0mFxs1x6p3Uj8H9M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"initialDate\": \"2024-10-15T00:00:00.000Z\",\n  \"endDate\": \"2024-10-15T00:00:00.000Z\",\n  \"price\": 700,\n  \"paymentDate\": \"2024-10-15T00:00:00.000Z\",\n  \"active\": true,\n  \"renderId\": 2,\n  \"locationId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3001/rents",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"rents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Rents",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg4NTI1NjcsImV4cCI6MTcyODg1NjE2N30.gm8nYaw2Vg96Txzp-FWNmnzQdkR0mFxs1x6p3Uj8H9M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3001/rents",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"rents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg4NTI1NjcsImV4cCI6MTcyODg1NjE2N30.gm8nYaw2Vg96Txzp-FWNmnzQdkR0mFxs1x6p3Uj8H9M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3001/rents/2",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"rents",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Rent",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg4NTI1NjcsImV4cCI6MTcyODg1NjE2N30.gm8nYaw2Vg96Txzp-FWNmnzQdkR0mFxs1x6p3Uj8H9M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"price\": 500\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3001/rents/2",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"rents",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Rent",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg4NTI1NjcsImV4cCI6MTcyODg1NjE2N30.gm8nYaw2Vg96Txzp-FWNmnzQdkR0mFxs1x6p3Uj8H9M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3001/rents/1",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"rents",
 								"1"
 							]
 						}

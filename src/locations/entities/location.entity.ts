@@ -1,5 +1,12 @@
+import { Rent } from 'src/rent/entities/rent.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Location {
@@ -35,4 +42,7 @@ export class Location {
 
   @ManyToOne(() => User, (user) => user.locations, { onDelete: 'CASCADE' })
   user: User;
+
+  @OneToMany(() => Rent, (rent) => rent.location)
+  rents: Rent[];
 }

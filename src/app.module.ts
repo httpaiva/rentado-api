@@ -11,6 +11,7 @@ import { LocationsModule } from './locations/locations.module';
 import { Location } from './locations/entities/location.entity';
 import { ConfigModule } from '@nestjs/config';
 import { RenterModule } from './renter/renter.module';
+import { RentModule } from './rent/rent.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { RenterModule } from './renter/renter.module';
     AuthModule,
     LocationsModule,
     RenterModule,
+    RentModule,
   ],
   controllers: [AppController],
   providers: [
