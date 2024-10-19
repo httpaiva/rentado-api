@@ -12,6 +12,7 @@ import { Location } from './locations/entities/location.entity';
 import { ConfigModule } from '@nestjs/config';
 import { RenterModule } from './renter/renter.module';
 import { RentModule } from './rent/rent.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { RentModule } from './rent/rent.module';
     LocationsModule,
     RenterModule,
     RentModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [

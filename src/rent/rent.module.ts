@@ -16,5 +16,6 @@ import { RenterModule } from 'src/renter/renter.module';
   ],
   controllers: [RentController],
   providers: [RentService],
+  exports: [RentService],
 })
 export class RentModule {}

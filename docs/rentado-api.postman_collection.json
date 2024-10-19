@@ -580,6 +580,186 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Payments",
+			"item": [
+				{
+					"name": "Create payment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3MjkzNDc2NDYsImV4cCI6MTcyOTM1MTI0Nn0.hTiF_fBywLvlY7QEGZ-vkYCTEB77HGA6WH4EXEXQdXg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"paymentDate\": \"2024-10-15T00:00:00.000Z\",\n  \"referedMonth\": 4,\n  \"referedYear\": 1999,\n  \"value\": 700,\n  \"rentId\": \"2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3001/payment",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3MjkzNDc2NDYsImV4cCI6MTcyOTM1MTI0Nn0.hTiF_fBywLvlY7QEGZ-vkYCTEB77HGA6WH4EXEXQdXg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3001/payment?rentId=2&referedYear=2000&referedMonth=4",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"payment"
+							],
+							"query": [
+								{
+									"key": "rentId",
+									"value": "2"
+								},
+								{
+									"key": "referedYear",
+									"value": "2000"
+								},
+								{
+									"key": "referedMonth",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg4NTI1NjcsImV4cCI6MTcyODg1NjE2N30.gm8nYaw2Vg96Txzp-FWNmnzQdkR0mFxs1x6p3Uj8H9M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3001/payment/2",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"payment",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update payment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg4NTI1NjcsImV4cCI6MTcyODg1NjE2N30.gm8nYaw2Vg96Txzp-FWNmnzQdkR0mFxs1x6p3Uj8H9M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"value\": 500\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3001/payment/2",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"payment",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete payment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiam9hb0BzaWx2YS5jb20iLCJpYXQiOjE3Mjg4NTI1NjcsImV4cCI6MTcyODg1NjE2N30.gm8nYaw2Vg96Txzp-FWNmnzQdkR0mFxs1x6p3Uj8H9M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3001/payment/1",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"payment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
