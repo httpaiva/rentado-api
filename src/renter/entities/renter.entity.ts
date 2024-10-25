@@ -25,16 +25,24 @@ export class Renter {
   @Column()
   document_rg: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   nationality?: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   birthDate?: Date;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   maritalStatus?: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   ocupation?: string;
 
   @ManyToOne(() => User, (user) => user.renters, { onDelete: 'CASCADE' })
