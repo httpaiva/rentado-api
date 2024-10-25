@@ -35,13 +35,16 @@ export class RentService {
     return await this.rentsRepository.find({
       where: { user: { id: userId } },
       relations: ['user'],
-      loadRelationIds: true,
       order: { id: 'ASC' },
     });
   }
 
-  async findOne(id: string) {
-    return await this.rentsRepository.findOneBy({ id });
+  async findOne(id: string): Promise<Rent | null> {
+    return await this.rentsRepository.findOne({
+      where: { id },
+      relations: ['renter', 'location'],
+      order: { id: 'ASC' },
+    });
   }
 
   async update(id: string, updateRentDto: UpdateRentDto): Promise<Rent | null> {

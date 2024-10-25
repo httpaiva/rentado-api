@@ -32,7 +32,6 @@ export class PaymentService {
     return await this.paymentRepository.find({
       where: { rent: { id: rentId }, referedMonth, referedYear },
       relations: ['rent'],
-      loadRelationIds: true,
       order: { id: 'ASC' },
     });
   }

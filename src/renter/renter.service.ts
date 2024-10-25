@@ -26,7 +26,6 @@ export class RenterService {
     return await this.rentersRepository.find({
       where: { user: { id: userId } },
       relations: ['user'],
-      loadRelationIds: true,
       order: { id: 'ASC' },
     });
   }

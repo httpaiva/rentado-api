@@ -1,6 +1,7 @@
 import { Location } from 'src/locations/entities/location.entity';
 import { Rent } from 'src/rent/entities/rent.entity';
 import { Renter } from 'src/renter/entities/renter.entity';
+import { Template } from 'src/template/entities/template.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
@@ -20,6 +21,38 @@ export class User {
   @Column({ select: false })
   password: string;
 
+  @Column({
+    nullable: true,
+    unique: true,
+  })
+  document_cpf?: string;
+
+  @Column({
+    nullable: true,
+    unique: true,
+  })
+  document_rg?: string;
+
+  @Column({
+    nullable: true,
+  })
+  nationality?: string;
+
+  @Column({
+    nullable: true,
+  })
+  birthDate?: Date;
+
+  @Column({
+    nullable: true,
+  })
+  maritalStatus?: string;
+
+  @Column({
+    nullable: true,
+  })
+  ocupation?: string;
+
   @OneToMany(() => Location, (location) => location.user)
   locations: Location[];
 
@@ -28,4 +61,7 @@ export class User {
 
   @OneToMany(() => Rent, (rent) => rent.user)
   rents: Rent[];
+
+  @OneToMany(() => Template, (template) => template.user)
+  templates: Template[];
 }

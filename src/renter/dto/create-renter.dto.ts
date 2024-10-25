@@ -1,11 +1,11 @@
 export class CreateRenterDto {
   id: string;
-  fisrtName: string;
+  firstName: string;
   lastName: string;
   document_cpf: string;
   document_rg: string;
   nationality?: string;
-  birthDate?: string;
+  birthDate?: Date;
   maritalStatus?: string;
   ocupation?: string;
 }

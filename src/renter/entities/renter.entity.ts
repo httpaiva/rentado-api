@@ -14,7 +14,7 @@ export class Renter {
   id: string;
 
   @Column()
-  fisrtName: string;
+  firstName: string;
 
   @Column()
   lastName: string;
@@ -29,7 +29,7 @@ export class Renter {
   nationality?: string;
 
   @Column()
-  birthDate?: string;
+  birthDate?: Date;
 
   @Column()
   maritalStatus?: string;

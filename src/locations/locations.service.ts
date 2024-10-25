@@ -29,7 +29,6 @@ export class LocationsService {
     return await this.locationsRepository.find({
       where: { user: { id: userId } },
       relations: ['user'],
-      loadRelationIds: true,
       order: { id: 'ASC' },
     });
   }
