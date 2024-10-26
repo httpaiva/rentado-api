@@ -34,7 +34,7 @@ export class RentService {
   async findAllFromUser(userId: string): Promise<Rent[]> {
     return await this.rentsRepository.find({
       where: { user: { id: userId } },
-      relations: ['user'],
+      relations: ['user', 'renter', 'location'],
       order: { id: 'ASC' },
     });
   }
