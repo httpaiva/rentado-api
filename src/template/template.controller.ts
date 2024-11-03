@@ -16,6 +16,7 @@ import * as Mustache from 'mustache';
 import { GetUser } from 'src/user/user.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { RentService } from 'src/rent/rent.service';
+import { parseDynamicFields } from 'src/utils/functions/parseDynamicFields';
 
 @Controller('template')
 export class TemplateController {
@@ -97,8 +98,10 @@ export class TemplateController {
       renter_ocupation: rent.renter.ocupation || '',
     };
 
+    const contentWithoutDynamic = parseDynamicFields(template.content);
+
     // Substitui as variáveis no template pelo valor correspondente
-    const output = Mustache.render(template.content, data);
+    const output = Mustache.render(contentWithoutDynamic, data);
 
     return output;
   }
