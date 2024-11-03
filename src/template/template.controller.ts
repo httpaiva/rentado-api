@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { TemplateService } from './template.service';
 import { CreateTemplateDto } from './dto/create-template.dto';
@@ -48,6 +49,11 @@ export class TemplateController {
   ) {
     const { id } = param;
     const { rent_id } = query;
+
+    if (!rent_id) {
+      throw new BadRequestException(`Invalid parameters`);
+    }
+
     // Template de texto com variáveis
     const template = await this.templateService.findOne(id);
 
@@ -103,7 +109,9 @@ export class TemplateController {
     // Substitui as variáveis no template pelo valor correspondente
     const output = Mustache.render(contentWithoutDynamic, data);
 
-    return output;
+    const newTemplate = { ...template, content: output };
+
+    return newTemplate;
   }
 
   @Patch(':id')
