@@ -31,13 +31,18 @@ export class PaymentService {
   ): Promise<Payment[]> {
     return await this.paymentRepository.find({
       where: { rent: { id: rentId }, referedMonth, referedYear },
-      relations: ['rent'],
+      relations: ['rent', 'rent.location', 'rent.renter'],
       order: { id: 'ASC' },
     });
   }
 
   async findOne(id: string) {
-    return await this.paymentRepository.findOneBy({ id });
+    const result = await this.paymentRepository.find({
+      where: { id },
+      relations: ['rent', 'rent.location', 'rent.renter'],
+      order: { id: 'ASC' },
+    });
+    return result[0];
   }
 
   async update(id: string, updatePaymentDto: UpdatePaymentDto) {
