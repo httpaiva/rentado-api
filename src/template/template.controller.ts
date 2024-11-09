@@ -38,8 +38,14 @@ export class TemplateController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.templateService.findOne(id);
+  async findOne(id: string) {
+    const template = await this.templateService.findOne(id);
+
+    if (!template) {
+      throw new NotFoundException(`Template with id ${id} not found`);
+    }
+
+    return template;
   }
 
   @Get('/translate/:id')

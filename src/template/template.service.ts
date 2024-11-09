@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTemplateDto } from './dto/create-template.dto';
 import { UpdateTemplateDto } from './dto/update-template.dto';
 import { Template } from './entities/template.entity';
@@ -34,11 +34,17 @@ export class TemplateService {
   }
 
   async findOne(id: string): Promise<Template | null> {
-    return await this.templatesRepository.findOne({
+    const template = await this.templatesRepository.findOne({
       where: { id },
       relations: ['user'],
       order: { id: 'ASC' },
     });
+
+    if (!template) {
+      throw new NotFoundException(`Template with id ${id} not found`);
+    }
+
+    return template;
   }
 
   async update(
@@ -46,10 +52,20 @@ export class TemplateService {
     updateTemplateDto: UpdateTemplateDto,
   ): Promise<Template | null> {
     await this.templatesRepository.update(id, updateTemplateDto);
-    return this.templatesRepository.findOneBy({ id });
+
+    // Use findOne to fetch the updated template
+    return this.templatesRepository.findOne({
+      where: { id },
+      relations: ['user'],
+      order: { id: 'ASC' },
+    });
   }
 
   async remove(id: string) {
-    return await this.templatesRepository.delete(id);
+    const result = await this.templatesRepository.delete(id);
+
+    if (result.affected === 0) {
+      throw new NotFoundException(`Template not found`);
+    }
   }
 }
