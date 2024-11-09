@@ -4,7 +4,6 @@ import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { Payment } from './entities/payment.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Rent } from 'src/rent/entities/rent.entity';
 
 @Injectable()
 export class PaymentService {
@@ -13,14 +12,8 @@ export class PaymentService {
     private readonly paymentRepository: Repository<Payment>,
   ) {}
 
-  async create(
-    createPaymentDto: CreatePaymentDto,
-    rent: Rent,
-  ): Promise<Payment> {
-    const payment = this.paymentRepository.create({
-      ...createPaymentDto,
-      rent,
-    });
+  async create(createPaymentDto: CreatePaymentDto): Promise<Payment> {
+    const payment = this.paymentRepository.create(createPaymentDto);
     return this.paymentRepository.save(payment);
   }
 

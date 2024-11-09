@@ -29,6 +29,8 @@ describe('RentService', () => {
     price: 1000,
     paymentDate: new Date(),
     active: true,
+    renter: mockRenter,
+    location: mockLocation,
   };
 
   beforeEach(async () => {
@@ -59,12 +61,7 @@ describe('RentService', () => {
     mockRentRepository.create.mockReturnValue(rent);
     mockRentRepository.save.mockResolvedValue(rent);
 
-    const result = await service.create(
-      mockCreateRentDto,
-      mockRenter,
-      mockLocation,
-      mockUser,
-    );
+    const result = await service.create(mockCreateRentDto, mockUser);
 
     expect(mockRentRepository.create).toHaveBeenCalledWith({
       ...mockCreateRentDto,

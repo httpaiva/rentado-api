@@ -6,14 +6,12 @@ import {
   Patch,
   Param,
   Delete,
-  NotFoundException,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { RentService } from './rent.service';
 import { CreateRentDto } from './dto/create-rent.dto';
 import { UpdateRentDto } from './dto/update-rent.dto';
-import { Renter } from 'src/renter/entities/renter.entity';
-import { Location } from 'src/locations/entities/location.entity';
 import { LocationsService } from 'src/locations/locations.service';
 import { RenterService } from 'src/renter/renter.service';
 import { GetUser } from 'src/user/user.decorator';
@@ -29,31 +27,18 @@ export class RentController {
   ) {}
 
   @Post()
-  async create(
-    @Body() createRentDto: CreateRentDto,
-    @GetUser() user: User,
-    renterId: Renter['id'],
-    locationId: Location['id'],
-  ) {
+  async create(@Body() createRentDto: CreateRentDto, @GetUser() user: User) {
+    if (!createRentDto.renter || !createRentDto.location) {
+      throw new BadRequestException();
+    }
     const newRent = {
       ...createRentDto,
       initialDate: new Date(createRentDto.initialDate),
       endDate: new Date(createRentDto.endDate),
       paymentDate: new Date(createRentDto.paymentDate),
     };
-    const renter = await this.renterService.findOne(renterId);
 
-    if (!renter) {
-      throw new NotFoundException(`Renter not found`);
-    }
-
-    const location = await this.locationsService.findOne(locationId);
-
-    if (!location) {
-      throw new NotFoundException(`Location not found`);
-    }
-
-    return this.rentService.create(newRent, renter, location, user);
+    return this.rentService.create(newRent, user);
   }
 
   @Get()

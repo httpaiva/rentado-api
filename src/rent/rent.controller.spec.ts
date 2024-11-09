@@ -1,16 +1,18 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-nocheck
 import { Test, TestingModule } from '@nestjs/testing';
 import { RentController } from './rent.controller';
 import { RentService } from './rent.service';
 import { LocationsService } from 'src/locations/locations.service';
 import { RenterService } from 'src/renter/renter.service';
-import { NotFoundException } from '@nestjs/common';
-import { Rent } from './entities/rent.entity';
-import { User } from 'src/user/entities/user.entity';
+import { BadRequestException } from '@nestjs/common';
 import { CreateRentDto } from './dto/create-rent.dto';
 import { UpdateRentDto } from './dto/update-rent.dto';
+import { User } from 'src/user/entities/user.entity';
 
 describe('RentController', () => {
-  let rentController: RentController;
+  let controller: RentController;
+  let rentService: RentService;
 
   const mockRentService = {
     create: jest.fn(),
@@ -28,7 +30,9 @@ describe('RentController', () => {
     findOne: jest.fn(),
   };
 
-  const mockUser: User = { id: 'user1', email: 'test@user.com' } as any; // mock User object
+  const mockUser = {
+    id: 'user1',
+  } as User;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,107 +44,66 @@ describe('RentController', () => {
       ],
     }).compile();
 
-    rentController = module.get<RentController>(RentController);
+    controller = module.get<RentController>(RentController);
+    rentService = module.get<RentService>(RentService);
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
   });
 
   describe('create', () => {
-    it('should create a new rent successfully', async () => {
+    it('should throw BadRequestException if renter or location are not provided', async () => {
       const createRentDto: CreateRentDto = {
-        id: 'rent1',
-        initialDate: new Date(),
-        endDate: new Date(),
-        price: 1000,
-        paymentDate: new Date(),
-        active: true,
+        renter: undefined,
+        location: undefined,
+        initialDate: '2024-11-01',
+        endDate: '2024-11-30',
+        paymentDate: '2024-11-05',
       };
-      const renter = { id: 'renter1', name: 'Renter' };
-      const location = { id: 'location1', name: 'Location' };
 
-      mockRenterService.findOne.mockResolvedValue(renter);
-      mockLocationsService.findOne.mockResolvedValue(location);
-      mockRentService.create.mockResolvedValue({
-        ...createRentDto,
-        renter,
-        location,
-      });
-
-      const result = await rentController.create(
-        createRentDto,
-        mockUser,
-        renter.id,
-        location.id,
-      );
-
-      expect(result).toEqual({ ...createRentDto, renter, location });
-      expect(mockRentService.create).toHaveBeenCalledWith(
-        createRentDto,
-        renter,
-        location,
-        mockUser,
+      await expect(controller.create(createRentDto, mockUser)).rejects.toThrow(
+        BadRequestException,
       );
     });
 
-    it('should throw NotFoundException if renter is not found', async () => {
+    it('should create a new rent', async () => {
       const createRentDto: CreateRentDto = {
-        id: 'rent1',
-        initialDate: new Date(),
-        endDate: new Date(),
-        price: 1000,
-        paymentDate: new Date(),
-        active: true,
+        renter: { id: 'renter1' },
+        location: { id: 'location1' },
+        initialDate: '2024-11-01',
+        endDate: '2024-11-30',
+        paymentDate: '2024-11-05',
       };
 
-      mockRenterService.findOne.mockResolvedValue(null); // Renter not found
+      const newRent = { ...createRentDto, id: 'rent1' };
 
-      await expect(
-        rentController.create(
-          createRentDto,
-          mockUser,
-          'invalidRenterId',
-          'locationId',
-        ),
-      ).rejects.toThrow(NotFoundException);
-    });
+      mockRentService.create.mockResolvedValue(newRent);
 
-    it('should throw NotFoundException if location is not found', async () => {
-      const createRentDto: CreateRentDto = {
-        id: 'rent1',
-        initialDate: new Date(),
-        endDate: new Date(),
-        price: 1000,
-        paymentDate: new Date(),
-        active: true,
-      };
-      const renter = { id: 'renter1', name: 'Renter' };
+      const result = await controller.create(createRentDto, mockUser);
 
-      mockRenterService.findOne.mockResolvedValue(renter);
-      mockLocationsService.findOne.mockResolvedValue(null); // Location not found
-
-      await expect(
-        rentController.create(
-          createRentDto,
-          mockUser,
-          renter.id,
-          'invalidLocationId',
-        ),
-      ).rejects.toThrow(NotFoundException);
+      expect(result).toEqual(newRent);
+      expect(rentService.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ...createRentDto,
+          initialDate: expect.any(Date),
+          endDate: expect.any(Date),
+          paymentDate: expect.any(Date),
+        }),
+        mockUser,
+      );
     });
   });
 
   describe('findAll', () => {
-    it('should return all rents for a user', async () => {
-      const mockRents: Rent[] = [
-        // @ts-expect-error - no need to pass all rent properties
-        { id: 'rent1', price: 1000, active: true },
-        // @ts-expect-error - no need to pass all rent properties
-        { id: 'rent2', price: 1200, active: true },
-      ];
+    it('should return an array of rents', async () => {
+      const rents = [{ id: 'rent1' }, { id: 'rent2' }];
+      mockRentService.findAllFromUser.mockResolvedValue(rents);
 
-      mockRentService.findAllFromUser.mockResolvedValue(mockRents);
+      const result = await controller.findAll(mockUser, { active: true });
 
-      const result = await rentController.findAll(mockUser, { active: true });
-      expect(result).toEqual(mockRents);
-      expect(mockRentService.findAllFromUser).toHaveBeenCalledWith({
+      expect(result).toEqual(rents);
+      expect(rentService.findAllFromUser).toHaveBeenCalledWith({
         userId: mockUser.id,
         active: true,
       });
@@ -148,45 +111,39 @@ describe('RentController', () => {
   });
 
   describe('findOne', () => {
-    it('should return a single rent by id', async () => {
-      // @ts-expect-error - no need to pass all rent properties
-      const mockRent: Rent = { id: 'rent1', price: 1000, active: true };
+    it('should return a rent by id', async () => {
+      const rent = { id: 'rent1' };
+      mockRentService.findOne.mockResolvedValue(rent);
 
-      mockRentService.findOne.mockResolvedValue(mockRent);
+      const result = await controller.findOne('rent1');
 
-      const result = await rentController.findOne('rent1');
-      expect(result).toEqual(mockRent);
-      expect(mockRentService.findOne).toHaveBeenCalledWith('rent1');
+      expect(result).toEqual(rent);
+      expect(rentService.findOne).toHaveBeenCalledWith('rent1');
     });
   });
 
   describe('update', () => {
-    it('should update a rent successfully', async () => {
-      const updateRentDto: UpdateRentDto = { price: 1100 };
-      // @ts-expect-error - no need to pass all rent properties
-      const updatedRent: Rent = { id: 'rent1', price: 1100, active: true };
-
+    it('should update and return a rent', async () => {
+      const updateRentDto: UpdateRentDto = { paymentDate: '2024-11-10' };
+      const updatedRent = { id: 'rent1', ...updateRentDto };
       mockRentService.update.mockResolvedValue(updatedRent);
 
-      const result = await rentController.update('rent1', updateRentDto);
+      const result = await controller.update('rent1', updateRentDto);
+
       expect(result).toEqual(updatedRent);
-      expect(mockRentService.update).toHaveBeenCalledWith(
-        'rent1',
-        updateRentDto,
-      );
+      expect(rentService.update).toHaveBeenCalledWith('rent1', updateRentDto);
     });
   });
 
   describe('remove', () => {
-    it('should remove a rent successfully', async () => {
-      // @ts-expect-error - no need to pass all rent properties
-      const rentToRemove: Rent = { id: 'rent1', price: 1000, active: true };
+    it('should delete a rent', async () => {
+      const deleteResult = { affected: 1 };
+      mockRentService.remove.mockResolvedValue(deleteResult);
 
-      mockRentService.remove.mockResolvedValue(rentToRemove);
+      const result = await controller.remove('rent1');
 
-      const result = await rentController.remove('rent1');
-      expect(result).toEqual(rentToRemove);
-      expect(mockRentService.remove).toHaveBeenCalledWith('rent1');
+      expect(result).toEqual(deleteResult);
+      expect(rentService.remove).toHaveBeenCalledWith('rent1');
     });
   });
 });

@@ -4,8 +4,6 @@ import { UpdateRentDto } from './dto/update-rent.dto';
 import { Repository } from 'typeorm';
 import { Rent } from './entities/rent.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Renter } from 'src/renter/entities/renter.entity';
-import { Location } from 'src/locations/entities/location.entity';
 import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
@@ -15,16 +13,9 @@ export class RentService {
     private readonly rentsRepository: Repository<Rent>,
   ) {}
 
-  create(
-    createRentDto: CreateRentDto,
-    renter: Renter,
-    location: Location,
-    user: User,
-  ): Promise<Rent> {
+  create(createRentDto: CreateRentDto, user: User): Promise<Rent> {
     const rent = this.rentsRepository.create({
       ...createRentDto,
-      renter,
-      location,
       user,
     });
 

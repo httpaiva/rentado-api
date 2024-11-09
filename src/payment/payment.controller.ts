@@ -6,31 +6,21 @@ import {
   Patch,
   Param,
   Delete,
-  NotFoundException,
   Query,
 } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
-import { Rent } from 'src/rent/entities/rent.entity';
-import { RentService } from 'src/rent/rent.service';
 import { GetUser } from 'src/user/user.decorator';
 import { User } from 'src/user/entities/user.entity';
 
 @Controller('payment')
 export class PaymentController {
-  constructor(
-    private readonly paymentService: PaymentService,
-    private readonly rentService: RentService,
-  ) {}
+  constructor(private readonly paymentService: PaymentService) {}
 
   @Post()
-  async create(@Body() createPaymentDto: CreatePaymentDto, rentId: Rent['id']) {
-    const rent = await this.rentService.findOne(rentId);
-    if (!rent) {
-      throw new NotFoundException(`Rent not found`);
-    }
-    return this.paymentService.create(createPaymentDto, rent);
+  async create(@Body() createPaymentDto: CreatePaymentDto) {
+    return this.paymentService.create(createPaymentDto);
   }
 
   @Get()
