@@ -6,6 +6,7 @@ import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { NotFoundException } from '@nestjs/common';
 import { Payment } from './entities/payment.entity';
+import { User } from 'src/user/entities/user.entity';
 
 describe('PaymentController', () => {
   let controller: PaymentController;
@@ -96,10 +97,16 @@ describe('PaymentController', () => {
 
   describe('findAll', () => {
     it('should return all payments for a given rent and optional month/year', async () => {
-      const params = { rentId: '1', referedMonth: 1, referedYear: 2024 };
-      const result = await controller.findAll(params);
+      const userId = '1';
+      const params = {
+        rentId: '1',
+        referedMonth: 1,
+        referedYear: 2024,
+      };
+      const result = await controller.findAll({ id: userId } as User, params);
 
       expect(paymentService.findAllFromRent).toHaveBeenCalledWith(
+        userId,
         params.rentId,
         params.referedMonth,
         params.referedYear,

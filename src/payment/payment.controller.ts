@@ -14,6 +14,8 @@ import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { Rent } from 'src/rent/entities/rent.entity';
 import { RentService } from 'src/rent/rent.service';
+import { GetUser } from 'src/user/user.decorator';
+import { User } from 'src/user/entities/user.entity';
 
 @Controller('payment')
 export class PaymentController {
@@ -33,6 +35,8 @@ export class PaymentController {
 
   @Get()
   findAll(
+    @GetUser()
+    user: User,
     @Query()
     params: {
       rentId: string;
@@ -41,6 +45,7 @@ export class PaymentController {
     },
   ) {
     return this.paymentService.findAllFromRent(
+      user.id,
       params.rentId,
       params.referedMonth,
       params.referedYear,

@@ -31,9 +31,24 @@ export class RentService {
     return this.rentsRepository.save(rent);
   }
 
-  async findAllFromUser(userId: string): Promise<Rent[]> {
+  async findAllFromUser({
+    userId,
+    active,
+  }: {
+    userId: string;
+    active?: boolean;
+  }): Promise<Rent[]> {
+    const whereCondition: any = {
+      user: { id: userId },
+    };
+
+    // Adiciona a condição de filtro pela propriedade "active" se ela for fornecida
+    if (active !== undefined) {
+      whereCondition.active = active;
+    }
+
     return await this.rentsRepository.find({
-      where: { user: { id: userId } },
+      where: whereCondition,
       relations: ['user', 'renter', 'location'],
       order: { id: 'ASC' },
     });
@@ -49,7 +64,10 @@ export class RentService {
 
   async update(id: string, updateRentDto: UpdateRentDto): Promise<Rent | null> {
     await this.rentsRepository.update(id, updateRentDto);
-    return this.rentsRepository.findOneBy({ id });
+    return this.rentsRepository.findOne({
+      where: { id },
+      relations: ['renter', 'location'],
+    });
   }
 
   async remove(id: string) {

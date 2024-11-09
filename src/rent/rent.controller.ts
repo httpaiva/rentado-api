@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { RentService } from './rent.service';
 import { CreateRentDto } from './dto/create-rent.dto';
@@ -56,8 +57,17 @@ export class RentController {
   }
 
   @Get()
-  async findAll(@GetUser() user: User): Promise<Rent[]> {
-    return await this.rentService.findAllFromUser(user.id);
+  async findAll(
+    @GetUser() user: User,
+    @Query()
+    params: {
+      active?: boolean;
+    },
+  ): Promise<Rent[]> {
+    return await this.rentService.findAllFromUser({
+      userId: user.id,
+      active: params.active,
+    });
   }
 
   @Get(':id')

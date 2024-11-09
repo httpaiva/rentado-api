@@ -25,13 +25,21 @@ export class PaymentService {
   }
 
   async findAllFromRent(
+    userId: string,
     rentId: string,
     referedMonth?: number,
     referedYear?: number,
   ): Promise<Payment[]> {
     return await this.paymentRepository.find({
-      where: { rent: { id: rentId }, referedMonth, referedYear },
-      relations: ['rent', 'rent.location', 'rent.renter'],
+      where: {
+        rent: {
+          id: rentId,
+          user: { id: userId }, // Filtra pelo userId na relação rent.user
+        },
+        referedMonth,
+        referedYear,
+      },
+      relations: ['rent', 'rent.location', 'rent.renter', 'rent.user'], // Inclui a relação rent.user
       order: { id: 'ASC' },
     });
   }

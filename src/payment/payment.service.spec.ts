@@ -17,10 +17,10 @@ describe('PaymentService', () => {
     referedMonth: 1,
     referedYear: 2024,
     value: 100,
-    rent: { id: '1' } as Rent,
+    rent: { id: '1', user: { id: '1' } } as Rent,
   } as Payment;
 
-  const mockRent = { id: '1' } as Rent;
+  const mockRent = { id: '1', user: { id: '1' } } as Rent;
 
   const mockPaymentRepository = {
     create: jest.fn().mockReturnValue(mockPayment),
@@ -74,12 +74,17 @@ describe('PaymentService', () => {
 
   describe('findAllFromRent', () => {
     it('should return all payments for a given rent and optional month/year', async () => {
+      const userId = '1';
       const rentId = '1';
-      const result = await service.findAllFromRent(rentId, 1, 2024);
+      const result = await service.findAllFromRent(userId, rentId, 1, 2024);
 
       expect(paymentRepository.find).toHaveBeenCalledWith({
-        where: { rent: { id: rentId }, referedMonth: 1, referedYear: 2024 },
-        relations: ['rent', 'rent.location', 'rent.renter'],
+        where: {
+          rent: { id: rentId, user: { id: '1' } },
+          referedMonth: 1,
+          referedYear: 2024,
+        },
+        relations: ['rent', 'rent.location', 'rent.renter', 'rent.user'],
         order: { id: 'ASC' },
       });
       expect(result).toEqual([mockPayment]);
