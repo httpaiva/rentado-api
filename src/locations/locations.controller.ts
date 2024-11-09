@@ -23,6 +23,11 @@ export class LocationsController {
     return await this.locationService.findAllFromUser(user.id);
   }
 
+  @Get('available')
+  async findAllAvailable(@GetUser() user: User): Promise<Location[]> {
+    return await this.locationService.findAllAvailable(user.id);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.locationService.findOne(id);

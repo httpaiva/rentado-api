@@ -33,6 +33,23 @@ export class LocationsService {
     });
   }
 
+  async findAllAvailable(userId: string): Promise<Location[]> {
+    const results = await this.locationsRepository.find({
+      where: { user: { id: userId } },
+      relations: ['user', 'rents'],
+      order: { id: 'ASC' },
+    });
+
+    // Filtra as locations onde todos os rents têm active = false ou não possuem rents
+    const availableLocations = results.filter(
+      (location) =>
+        location.rents.length === 0 || // Inclui locations sem rents
+        location.rents.every((rent) => rent.active === false), // Inclui locations onde todos os rents têm active = false
+    );
+
+    return availableLocations;
+  }
+
   async findOne(id: string) {
     return await this.locationsRepository.findOneBy({ id });
   }
