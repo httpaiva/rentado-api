@@ -10,7 +10,7 @@ import {
 
 @Entity()
 export class Location {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()

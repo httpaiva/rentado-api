@@ -10,7 +10,7 @@ import {
 
 @Entity()
 export class Renter {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
