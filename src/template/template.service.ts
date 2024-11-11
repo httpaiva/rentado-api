@@ -33,9 +33,9 @@ export class TemplateService {
     });
   }
 
-  async findOne(id: string): Promise<Template | null> {
+  async findOne(id: string, userId: string): Promise<Template | null> {
     const template = await this.templatesRepository.findOne({
-      where: { id },
+      where: { id, user: { id: userId } },
       relations: ['user'],
       order: { id: 'ASC' },
     });

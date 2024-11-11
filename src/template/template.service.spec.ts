@@ -86,11 +86,11 @@ describe('TemplateService', () => {
     it('should return a template by id', async () => {
       mockTemplateRepository.findOne.mockResolvedValue(mockTemplate);
 
-      const result = await templateService.findOne('template1');
+      const result = await templateService.findOne('template1', mockUser.id);
 
       expect(result).toEqual(mockTemplate);
       expect(mockTemplateRepository.findOne).toHaveBeenCalledWith({
-        where: { id: 'template1' },
+        where: { id: 'template1', user: { id: mockUser.id } },
         relations: ['user'],
         order: { id: 'ASC' },
       });
@@ -99,9 +99,9 @@ describe('TemplateService', () => {
     it('should throw NotFoundException if template is not found', async () => {
       mockTemplateRepository.findOne.mockResolvedValue(null); // Template not found
 
-      await expect(templateService.findOne('template1')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        templateService.findOne('template1', mockUser.id),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 

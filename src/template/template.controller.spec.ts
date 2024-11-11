@@ -5,26 +5,34 @@ import { RentService } from 'src/rent/rent.service';
 import { CreateTemplateDto } from './dto/create-template.dto';
 import { UpdateTemplateDto } from './dto/update-template.dto';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
+import * as Mustache from 'mustache';
+import { parseDynamicFields } from 'src/utils/functions/parseDynamicFields';
 import { User } from 'src/user/entities/user.entity';
 
 describe('TemplateController', () => {
   let controller: TemplateController;
-  let templateService: TemplateService;
-  let rentService: RentService;
+
+  const mockTemplateService = {
+    create: jest.fn(),
+    findAllFromUser: jest.fn(),
+    findOne: jest.fn(),
+    update: jest.fn(),
+    remove: jest.fn(),
+  };
+
+  const mockRentService = {
+    findOne: jest.fn(),
+  };
+
+  const mockUser = {
+    id: 'user1',
+    firstName: 'John',
+    lastName: 'Doe',
+    document_cpf: '12345678901',
+    email: 'john@example.com',
+  } as User;
 
   beforeEach(async () => {
-    const mockTemplateService = {
-      create: jest.fn(),
-      findAllFromUser: jest.fn(),
-      findOne: jest.fn(),
-      update: jest.fn(),
-      remove: jest.fn(),
-    };
-
-    const mockRentService = {
-      findOne: jest.fn(),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TemplateController],
       providers: [
@@ -34,8 +42,6 @@ describe('TemplateController', () => {
     }).compile();
 
     controller = module.get<TemplateController>(TemplateController);
-    templateService = module.get<TemplateService>(TemplateService);
-    rentService = module.get<RentService>(RentService);
   });
 
   it('should be defined', () => {
@@ -43,162 +49,153 @@ describe('TemplateController', () => {
   });
 
   describe('create', () => {
-    it('should create a new template', async () => {
-      // @ts-expect-error - no need to pass all template properties
+    it('should call TemplateService.create and return the created template', async () => {
       const createTemplateDto: CreateTemplateDto = {
-        title: 'Template 1',
-        content: 'Hello {{user_firstName}}',
-      };
-      const user = {
-        id: '1',
-        email: 'test@example.com',
-        firstName: 'John',
-      } as User;
-      const mockTemplate = {
-        ...createTemplateDto,
-        user,
+        id: 'template1',
+        title: 'New Template',
+        content: 'Template content',
       };
 
-      templateService.create = jest.fn().mockResolvedValue(mockTemplate);
+      const createdTemplate = { ...createTemplateDto, id: 'template1' };
+      mockTemplateService.create.mockReturnValue(createdTemplate);
 
-      const result = await controller.create(createTemplateDto, user);
+      const result = await controller.create(createTemplateDto, mockUser);
 
-      expect(result).toEqual(mockTemplate);
-      expect(templateService.create).toHaveBeenCalledWith(
+      expect(result).toEqual(createdTemplate);
+      expect(mockTemplateService.create).toHaveBeenCalledWith(
         createTemplateDto,
-        user,
+        mockUser,
       );
     });
   });
 
   describe('findAll', () => {
-    it('should return a list of templates for the user', async () => {
-      const user = {
-        id: '1',
-        email: 'test@example.com',
-        firstName: 'John',
-      } as User;
-      const mockTemplates = [
-        { id: '1', name: 'Template 1', content: 'Hello {{user_firstName}}' },
-        { id: '2', name: 'Template 2', content: 'Hi {{user_firstName}}' },
-      ];
+    it('should return all templates for a user', async () => {
+      const templates = [{ id: 'template1' }, { id: 'template2' }];
+      mockTemplateService.findAllFromUser.mockResolvedValue(templates);
 
-      templateService.findAllFromUser = jest
-        .fn()
-        .mockResolvedValue(mockTemplates);
+      const result = await controller.findAll(mockUser);
 
-      const result = await controller.findAll(user);
-
-      expect(result).toEqual(mockTemplates);
-      expect(templateService.findAllFromUser).toHaveBeenCalledWith(user.id);
+      expect(result).toEqual(templates);
+      expect(mockTemplateService.findAllFromUser).toHaveBeenCalledWith(
+        mockUser.id,
+      );
     });
   });
 
   describe('findOne', () => {
-    it('should return a template by id', async () => {
-      const templateId = '1';
-      const mockTemplate = {
-        id: templateId,
-        name: 'Template 1',
-        content: 'Hello {{user_firstName}}',
-      };
+    it('should return a template by ID', async () => {
+      const template = { id: 'template1', content: 'Template content' };
+      mockTemplateService.findOne.mockResolvedValue(template);
 
-      templateService.findOne = jest.fn().mockResolvedValue(mockTemplate);
+      const result = await controller.findOne(mockUser, { id: 'template1' });
 
-      const result = await controller.findOne(templateId);
-
-      expect(result).toEqual(mockTemplate);
-      expect(templateService.findOne).toHaveBeenCalledWith(templateId);
+      expect(result).toEqual(template);
+      expect(mockTemplateService.findOne).toHaveBeenCalledWith(
+        'template1',
+        mockUser.id,
+      );
     });
 
-    it('should throw NotFoundException if template not found', async () => {
-      const templateId = '1';
+    it('should throw NotFoundException if template is not found', async () => {
+      mockTemplateService.findOne.mockResolvedValue(null);
 
-      templateService.findOne = jest.fn().mockResolvedValue(null);
-
-      await expect(controller.findOne(templateId)).rejects.toThrow(
-        NotFoundException,
+      await expect(
+        controller.findOne(mockUser, { id: 'template1' }),
+      ).rejects.toThrow(
+        new NotFoundException(`Template with id template1 not found`),
       );
     });
   });
 
   describe.skip('translate', () => {
-    it('should return a translated template', async () => {
-      const templateId = '1';
-      const rentId = '123';
-      const mockTemplate = {
-        id: templateId,
-        content: 'Hello {{user_firstName}}',
-      };
-      const mockRent = {
-        id: rentId,
-        location: { name: 'Location 1' },
-        renter: { firstName: 'John' },
-      };
-      const mockTranslatedTemplate = { ...mockTemplate, content: 'Hello John' };
+    const mockRent = {
+      location: {
+        name: 'Location name',
+        country: 'Country',
+      },
+      initialDate: new Date(),
+      endDate: new Date(),
+      price: 1000,
+      paymentDate: new Date(),
+      renter: { firstName: 'Renter' },
+    };
 
-      templateService.findOne = jest.fn().mockResolvedValue(mockTemplate);
-      rentService.findOne = jest.fn().mockResolvedValue(mockRent);
+    it('should return a translated template', async () => {
+      const template = {
+        id: 'template1',
+        content: 'Hello, {{user_firstName}} from {{location_name}}',
+        user: mockUser,
+      };
+      const expectedContent = 'Hello, John from Location name';
+
+      mockTemplateService.findOne.mockResolvedValue(template);
+      mockRentService.findOne.mockResolvedValue(mockRent);
+      jest.spyOn(Mustache, 'render').mockReturnValue(expectedContent);
 
       const result = await controller.translate(
-        { id: templateId },
-        { rent_id: rentId },
+        mockUser,
+        { id: 'template1' },
+        { rent_id: 'rent1' },
       );
 
-      expect(result).toEqual(mockTranslatedTemplate);
-      expect(templateService.findOne).toHaveBeenCalledWith(templateId);
-      expect(rentService.findOne).toHaveBeenCalledWith(rentId);
+      expect(result.content).toEqual(expectedContent);
+      expect(Mustache.render).toHaveBeenCalledWith(
+        parseDynamicFields(template.content),
+        expect.objectContaining({
+          user_firstName: mockUser.firstName,
+          location_name: mockRent.location.name,
+        }),
+      );
     });
 
     it('should throw BadRequestException if rent_id is missing', async () => {
       await expect(
-        controller.translate({ id: '1' }, { rent_id: '' }),
-      ).rejects.toThrow(BadRequestException);
+        controller.translate(mockUser, { id: 'template1' }, { rent_id: '' }),
+      ).rejects.toThrow(new BadRequestException('Invalid parameters'));
     });
 
-    it('should throw NotFoundException if template not found', async () => {
-      const templateId = '1';
-      const rentId = '123';
-
-      templateService.findOne = jest.fn().mockResolvedValue(null);
+    it('should throw NotFoundException if template is not found', async () => {
+      mockTemplateService.findOne.mockResolvedValue(null);
 
       await expect(
-        controller.translate({ id: templateId }, { rent_id: rentId }),
-      ).rejects.toThrow(NotFoundException);
+        controller.translate(
+          mockUser,
+          { id: 'template1' },
+          { rent_id: 'rent1' },
+        ),
+      ).rejects.toThrow(new NotFoundException('Template not found'));
     });
 
-    it('should throw NotFoundException if rent not found', async () => {
-      const templateId = '1';
-      const rentId = '123';
-      const mockTemplate = {
-        id: templateId,
-        content: 'Hello {{user_firstName}}',
-      };
-
-      templateService.findOne = jest.fn().mockResolvedValue(mockTemplate);
-      rentService.findOne = jest.fn().mockResolvedValue(null);
+    it('should throw NotFoundException if rent is not found', async () => {
+      const template = { id: 'template1', content: 'Content', user: mockUser };
+      mockTemplateService.findOne.mockResolvedValue(template);
+      mockRentService.findOne.mockResolvedValue(null);
 
       await expect(
-        controller.translate({ id: templateId }, { rent_id: rentId }),
-      ).rejects.toThrow(NotFoundException);
+        controller.translate(
+          mockUser,
+          { id: 'template1' },
+          { rent_id: 'rent1' },
+        ),
+      ).rejects.toThrow(new NotFoundException('Rent not found'));
     });
   });
 
   describe('update', () => {
     it('should update a template', async () => {
-      const templateId = '1';
       const updateTemplateDto: UpdateTemplateDto = {
-        title: 'Updated Template',
+        content: 'Updated content',
       };
-      const mockTemplate = { id: templateId, ...updateTemplateDto };
+      const updatedTemplate = { id: 'template1', ...updateTemplateDto };
 
-      templateService.update = jest.fn().mockResolvedValue(mockTemplate);
+      mockTemplateService.update.mockResolvedValue(updatedTemplate);
 
-      const result = await controller.update(templateId, updateTemplateDto);
+      const result = await controller.update('template1', updateTemplateDto);
 
-      expect(result).toEqual(mockTemplate);
-      expect(templateService.update).toHaveBeenCalledWith(
-        templateId,
+      expect(result).toEqual(updatedTemplate);
+      expect(mockTemplateService.update).toHaveBeenCalledWith(
+        'template1',
         updateTemplateDto,
       );
     });
@@ -206,13 +203,25 @@ describe('TemplateController', () => {
 
   describe('remove', () => {
     it('should remove a template', async () => {
-      const templateId = '1';
+      const deleteResult = { affected: 1 };
 
-      templateService.remove = jest.fn().mockResolvedValue({ affected: 1 });
+      mockTemplateService.remove.mockResolvedValue(deleteResult);
 
-      await controller.remove(templateId);
+      const result = await controller.remove('template1');
 
-      expect(templateService.remove).toHaveBeenCalledWith(templateId);
+      expect(result).toEqual(deleteResult);
+      expect(mockTemplateService.remove).toHaveBeenCalledWith('template1');
+    });
+
+    it('should return result with affected = 0 if no template was found', async () => {
+      const deleteResult = { affected: 0 };
+
+      mockTemplateService.remove.mockResolvedValue(deleteResult);
+
+      const result = await controller.remove('template1');
+
+      expect(result).toEqual(deleteResult);
+      expect(mockTemplateService.remove).toHaveBeenCalledWith('template1');
     });
   });
 });

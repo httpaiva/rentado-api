@@ -38,8 +38,9 @@ export class TemplateController {
   }
 
   @Get(':id')
-  async findOne(id: string) {
-    const template = await this.templateService.findOne(id);
+  async findOne(@GetUser() user: User, @Param() param: { id: string }) {
+    const { id } = param;
+    const template = await this.templateService.findOne(id, user.id);
 
     if (!template) {
       throw new NotFoundException(`Template with id ${id} not found`);
@@ -50,6 +51,7 @@ export class TemplateController {
 
   @Get('/translate/:id')
   async translate(
+    @GetUser() user: User,
     @Param() param: { id: string },
     @Query() query: { rent_id: string },
   ) {
@@ -61,7 +63,7 @@ export class TemplateController {
     }
 
     // Template de texto com variáveis
-    const template = await this.templateService.findOne(id);
+    const template = await this.templateService.findOne(id, user.id);
 
     if (!template) {
       throw new NotFoundException(`Template not found`);
