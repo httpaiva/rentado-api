@@ -17,6 +17,7 @@ import { Renter } from './renter/entities/renter.entity';
 import { Rent } from './rent/entities/rent.entity';
 import { Payment } from './payment/entities/payment.entity';
 import { Template } from './template/entities/template.entity';
+import { Location } from './locations/entities/location.entity';
 
 @Module({
   imports: [
