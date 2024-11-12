@@ -12,11 +12,25 @@ import { RenterModule } from './renter/renter.module';
 import { RentModule } from './rent/rent.module';
 import { PaymentModule } from './payment/payment.module';
 import { TemplateModule } from './template/template.module';
-import { dataSourceOptions } from './data-source';
+import { User } from './user/entities/user.entity';
+import { Renter } from './renter/entities/renter.entity';
+import { Rent } from './rent/entities/rent.entity';
+import { Payment } from './payment/entities/payment.entity';
+import { Template } from './template/entities/template.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(dataSourceOptions),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'db',
+      port: 5432,
+      username: process.env.DATABASE_USERNAME,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME,
+      entities: [User, Location, Renter, Rent, Payment, Template],
+      synchronize: true,
+      autoLoadEntities: true,
+    }),
     ConfigModule.forRoot({ isGlobal: true }),
     UserModule,
     AuthModule,
